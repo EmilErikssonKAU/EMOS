@@ -2,7 +2,7 @@ org 0x7C00              ;according to BIOS standard
 bits 16                 ;
 
 main:
-    jmp greet
+    call greet
     hlt                 ;execution stops until interrupt
                         ;jmp $ <-> alternative for inf loop
 
