@@ -1,46 +1,37 @@
-org 0x7C00              ;according to BIOS standard
-bits 16                 ;
+org 0x7C00              
+bits 16   
+
+;Prints string to the screen
+;Params: 
+;   - ds:si points to string
+
+puts:
+    ;save registers we will modify
+    push si
+    push ax
+
+.loop:
+    lodsb
+    or al, al       ;testa ifall al = 0
+    jz .done
+    jmp .loop
+
+.done:
+    pop ax
+    pop si
+    ret
+
 
 main:
-    jmp greet
-    hlt                 ;execution stops until interrupt
-                        ;jmp $ <-> alternative for inf loop
+    mov ax, 0
+    mov ds, ax          ;flyttar ds till segment 0
+    mov es, ax          ;flyttar es till segment 0
 
+    mov ss, ax
+    mov sp, 0x7C00      ;0x7C00 är start av boot_sect, stack växer nedåt
 
-greet:
-    push bp		        ;prolog
-    mov sp, bp		    ;
+    hlt
+	        
 
-    mov ah, 0x0e        ;BIOS interrupt code for typing to teletype
-                        ;int 0x10 -> interrupt for BIOS video services
-                        ;the interrupt list is provided by BIOS
-    mov al , 'G'
-        int 0x10
-    mov al , 'O'
-        int 0x10
-    mov al , 'D'
-        int 0x10
-    mov al , 'M'
-        int 0x10
-    mov al , 'O'
-        int 0x10
-    mov al , 'R'
-        int 0x10
-    mov al , 'G'
-        int 0x10
-    mov al , 'O'
-        int 0x10
-    mov al , 'N'
-        int 0x10
-    mov al , '!'
-        int 0x10
-    
-    mov bp, sp		    ;epilog
-    pop bp		        ;
-    ret			        ;
-
-                        ;($-$$) <-> length of the program so far
-times 510 -($ -$$) db 0 ;fills the program with empty bits up until
-                        ;position 510 with respect to start of sector
-
-dw 0xAA55               ;bootloader signature
+times 510 -($ -$$) db 0 
+dw 0xAA55   
