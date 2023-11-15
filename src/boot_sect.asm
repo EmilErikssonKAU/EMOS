@@ -5,6 +5,11 @@ bits 16
 ;Params: 
 ;   - ds:si points to string
 
+%define ENDL 0x0D, 0x0A
+
+start:
+    jmp main
+
 puts:
     ;save registers we will modify
     push si
@@ -14,6 +19,10 @@ puts:
     lodsb
     or al, al       ;testa ifall al = 0
     jz .done
+
+    mov ah, 0x0e    ;
+    int 0x10
+
     jmp .loop
 
 .done:
@@ -30,7 +39,12 @@ main:
     mov ss, ax
     mov sp, 0x7C00      ;0x7C00 är start av boot_sect, stack växer nedåt
 
+    mov si, message
+    call puts
+
     hlt
+
+message: db 'Hello World', ENDL, 0
 	        
 
 times 510 -($ -$$) db 0 
