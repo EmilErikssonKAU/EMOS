@@ -36,18 +36,31 @@ puts:
 
 main:
     mov ax, 0
-    mov ds, ax          ;flyttar ds till segment 0
-    mov es, ax          ;flyttar es till segment 0
+    mov ds, ax          ; flyttar ds till segment 0
+    mov es, ax          ; flyttar es till segment 0
 
     mov ss, ax
-    mov sp, 0x7C00      ;0x7C00 är start av boot_sect, stack växer nedåt
+    mov sp, 0x7C00      ; 0x7C00 är start av boot_sect, stack växer nedåt
 
+    ;read something from floppy disk
+    mov [ebr_drive_number], dl
+
+    mov ax, 1           ; LBA = 1
+    mov cl, 1           ; One sector to read
+    mov bx, 0x7E00      
+    call disk_read
+
+
+    ; print 'Hello World'
     mov si, message
     call puts
 
     hlt
 
+%include "/root/OSDev/src/bootloader/diskreader.asm"
+
 message: db 'Hello World', ENDL, 0
+readFailedMessage: db 'Read failed', ENDL, 0
 	        
 
 times 510 -($ -$$) db 0 
