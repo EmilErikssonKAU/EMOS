@@ -1,26 +1,29 @@
 org 0x7C00              
 bits 16   
 
-;Prints string to the screen
-;Params: 
-;   - ds:si points to string
+;
+;   Prints string to the screen
+;   Params: 
+;       - ds:si points to string
+;
 
 %define ENDL 0x0D, 0x0A
+%include "/root/OSDev/src/bootloader/FAT12_headers.asm"
 
 start:
     jmp main
 
 puts:
-    ;save registers we will modify
+                        ;save registers we will modify
     push si
     push ax
 
 .loop:
     lodsb
-    or al, al       ;testa ifall al = 0
+    or al, al           ;testa ifall al = 0
     jz .done
 
-    mov ah, 0x0e    ;
+    mov ah, 0x0e    
     int 0x10
 
     jmp .loop
