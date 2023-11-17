@@ -55,6 +55,7 @@ main:
     mov si, message
     call puts
 
+    cli
     hlt
 
 %include "/root/OSDev/src/bootloader/diskreader.asm"
